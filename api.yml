@@ -43,31 +43,10 @@ paths:
       responses:
         "200":
           description: OK
-    put:
-      tags:
-        - "user"
-      summary: "ユーザー更新"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                name:
-                  type: string
-                password:
-                  type: string
-                money:
-                  type: integer
-                hp:
-                  type: integer
-              required:
-                - id
-      responses:
-        "200":
-          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
 
   /users/{user_id}:
     get:
@@ -88,6 +67,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        "404":
+          $ref: "#/components/responses/404Error"
+    put:
+      tags:
+        - "user"
+      summary: "ユーザー更新"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+                money:
+                  type: integer
+                hp:
+                  type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/404Error"
 
   /login:
     post:
@@ -110,6 +114,8 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          $ref: "#/components/responses/401Error"
 
   /users/buy_item:
     post:
@@ -132,6 +138,22 @@ paths:
       responses:
         "200":
           description: OK
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
+        "405":
+          description: "Error"
+          content:
+            "application/json":
+              schema:
+                description: "エラー"
+                type: object
+                properties:
+                  message:
+                    title: "エラーメッセージ"
+                    type: string
+                    example: "item上限になった"
 
   /users/use_item:
     post:
@@ -154,6 +176,10 @@ paths:
       responses:
         "200":
           description: OK
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
 
   /items:
     get:
@@ -181,6 +207,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
     put:
       tags:
         - "item"
@@ -193,6 +223,8 @@ paths:
       responses:
         "200":
           description: OK
+        "404":
+          $ref: "#/components/responses/404Error"
     delete:
       tags:
         - "item"
@@ -210,6 +242,8 @@ paths:
       responses:
         "200":
           description: OK
+        "404":
+          $ref: "#/components/responses/404Error"
   /itmes/item_id:
     get:
       tags:
@@ -268,3 +302,41 @@ components:
         price:
           type: integer
           example: 10
+
+  responses:
+    404Error:
+      description: "Error"
+      content:
+        "application/json":
+          schema:
+            description: "エラー"
+            type: object
+            properties:
+              message:
+                title: "エラーメッセージ"
+                type: string
+                example: "not found"
+    403Error:
+      description: "Error"
+      content:
+        "application/json":
+          schema:
+            description: "エラー"
+            type: object
+            properties:
+              message:
+                title: "エラーメッセージ"
+                type: string
+                example: "not enough"
+    401Error:
+      description: "Error"
+      content:
+        "application/json":
+          schema:
+            description: "エラー"
+            type: object
+            properties:
+              message:
+                title: "エラーメッセージ"
+                type: string
+                example: "user not found or password incorrect"
