@@ -1,0 +1,82 @@
+openapi: 3.0.0
+
+info:
+  title: 'ItemAPI'
+  version: '1.0.0'
+
+servers:
+  - url: 'http://localhost:8080/'
+    description: 'ローカル API'
+
+tags:
+  - name: Items
+    description: 'アイテム機能'
+
+paths:
+  '/items':
+    get:
+      tags:
+        - Items
+      summary: 'アイテム一覧取得'
+      responses:
+        '200':
+          description: 'アイテムテーブルから一覧取得'
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemModel'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+components:
+  schemas:
+    Error:
+      description: 'エラー'
+      type: object
+      properties:
+        message:
+          title: 'エラーメッセージ'
+          type: string
+          example: 'Error'
+        code:
+          title: 'ステータスコード'
+          type: integer
+          example: 400
+    ItemId:
+      description: 'アイテムID'
+      type: object
+      properties:
+        item_id:
+          title: 'アイテムID'
+          type: number
+    ItemModel:
+      description: 'アイテム情報'
+      type: object
+      properties:
+        name:
+          title: 'アイテムの名前'
+          type: string
+        heal:
+          title: 'アイテムの効果'
+          type: number
+        price:
+          title: 'アイテムの値段'
+          type: number
+    Item:
+      description: 'アイテム'
+      allOf:
+        - $ref: '#/components/schemas/ItemId'
+        - $ref: '#/components/schemas/ItemModel'
+
+  responses:
+    OK:
+      description: 'OK'
+    UnexpectedError:
+      description: 'Error'
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/Error'
+
