@@ -1,5 +1,4 @@
-import {HogeController} from "./HogeController";
+import { HogeController } from "./HogeController";
+import { UserController } from "./UserController";
 
-export {
-    HogeController
-};
+export { HogeController, UserController };

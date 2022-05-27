@@ -1,6 +1,6 @@
 {
   "host": "localhost",
   "user": "root",
-  "database": "laravel",
+  "database": "express_training",
   "password": "forge"
 }
