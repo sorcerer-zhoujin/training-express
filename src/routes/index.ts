@@ -16,14 +16,14 @@ router.get("/errorSample", hogeController.errorResponse);
 router.use("/foo", foo.router);
 
 //test mysql2
-router.get("/db", (req, res, next) => {
-  db_connection.query(
-    "SELECT COUNT(*) FROM `tweets`;",
-    (err, results, fields) => {
-      results = results;
+// router.get("/db", (req, res, next) => {
+//   db_connection.query(
+//     "SELECT COUNT(*) FROM `tweets`;",
+//     (err, results, fields) => {
+//       results = results;
 
-      res.status(200);
-      res.json({ text: results });
-    }
-  );
-});
+//       res.status(200);
+//       res.json({ text: results });
+//     }
+//   );
+// });

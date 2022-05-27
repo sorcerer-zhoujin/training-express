@@ -158,17 +158,17 @@ paths:
         "404":
           $ref: "#/components/responses/404Error"
         "405":
-          description: "Error"
+          description: |
+            リソースの購入後の所持数が上限を超える時に出るステータスコードです。
+            ---今回の購入は失敗となります。所持数はそのまま、お金も消費しないです。
           content:
             "application/json":
               schema:
-                description: "エラー"
                 type: object
                 properties:
                   message:
                     title: "エラーメッセージ"
                     type: string
-                    example: "item上限になった"
         "500":
           $ref: "#/components/responses/500Error"
 
