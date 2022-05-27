@@ -12,13 +12,15 @@ paths:
       summary: "ユーザー一覧"
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
+        "500":
+          $ref: "#/components/responses/500Error"
     post:
       tags:
         - "user"
@@ -42,11 +44,16 @@ paths:
                 - password
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
           content:
             application/json:
               schema:
-                type: integer
+                type: object
+                properties:
+                  id:
+                    type: integer
+        "500":
+          $ref: "#/components/responses/500Error"
 
   /users/{user_id}:
     get:
@@ -62,13 +69,15 @@ paths:
             type: integer
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
         "404":
           $ref: "#/components/responses/404Error"
+        "500":
+          $ref: "#/components/responses/500Error"
     put:
       tags:
         - "user"
@@ -89,9 +98,11 @@ paths:
                   type: integer
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
         "404":
           $ref: "#/components/responses/404Error"
+        "500":
+          $ref: "#/components/responses/500Error"
 
   /login:
     post:
@@ -113,9 +124,11 @@ paths:
                 - password
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
         "401":
           $ref: "#/components/responses/401Error"
+        "500":
+          $ref: "#/components/responses/500Error"
 
   /users/buy_item:
     post:
@@ -132,12 +145,14 @@ paths:
                   type: integer
                 item_id:
                   type: integer
+                num:
+                  type: integer
               required:
                 - id
                 - item_id
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
         "403":
           $ref: "#/components/responses/403Error"
         "404":
@@ -154,6 +169,8 @@ paths:
                     title: "エラーメッセージ"
                     type: string
                     example: "item上限になった"
+        "500":
+          $ref: "#/components/responses/500Error"
 
   /users/use_item:
     post:
@@ -170,16 +187,20 @@ paths:
                   type: integer
                 item_id:
                   type: integer
+                num:
+                  type: integer
               required:
                 - id
                 - item_id
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
         "403":
           $ref: "#/components/responses/403Error"
         "404":
           $ref: "#/components/responses/404Error"
+        "500":
+          $ref: "#/components/responses/500Error"
 
   /items:
     get:
@@ -195,6 +216,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Item"
+        "500":
+          $ref: "#/components/responses/500Error"
     post:
       tags:
         - "item"
@@ -206,45 +229,18 @@ paths:
               $ref: "#/components/schemas/Item"
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
           content:
             application/json:
               schema:
-                type: integer
-    put:
-      tags:
-        - "item"
-      summary: "アイテム更新"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Item"
-      responses:
-        "200":
-          description: OK
-        "404":
-          $ref: "#/components/responses/404Error"
-    delete:
-      tags:
-        - "item"
-      summary: "アイテム削除"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-              required:
-                - id
-      responses:
-        "200":
-          description: OK
-        "404":
-          $ref: "#/components/responses/404Error"
-  /itmes/item_id:
+                type: object
+                properties:
+                  id:
+                    type: integer
+        "500":
+          $ref: "#/components/responses/500Error"
+
+  /itmes/{item_id}:
     get:
       tags:
         - "item"
@@ -258,11 +254,54 @@ paths:
             type: integer
       responses:
         "200":
-          description: OK
+          description: リクエストが成功した時に出るステータスコードです。
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
+        "500":
+          $ref: "#/components/responses/500Error"
+    put:
+      tags:
+        - "item"
+      summary: "アイテム更新"
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          description: "アイテムID"
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Item"
+      responses:
+        "200":
+          description: リクエストが成功した時に出るステータスコードです。
+        "404":
+          $ref: "#/components/responses/404Error"
+        "500":
+          $ref: "#/components/responses/500Error"
+    delete:
+      tags:
+        - "item"
+      summary: "アイテム削除"
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          description: "アイテムID"
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: リクエストが成功した時に出るステータスコードです。
+        "404":
+          $ref: "#/components/responses/404Error"
+        "500":
+          $ref: "#/components/responses/500Error"
 
 components:
   schemas:
@@ -305,38 +344,46 @@ components:
 
   responses:
     404Error:
-      description: "Error"
+      description: |
+        データが発見できない時に出るステータスコードです。
       content:
         "application/json":
           schema:
-            description: "エラー"
             type: object
             properties:
               message:
                 title: "エラーメッセージ"
                 type: string
-                example: "not found"
     403Error:
-      description: "Error"
+      description: |
+        リソースが足りない時に出るステータスコードです。
       content:
         "application/json":
           schema:
-            description: "エラー"
             type: object
             properties:
               message:
                 title: "エラーメッセージ"
                 type: string
-                example: "not enough"
     401Error:
-      description: "Error"
+      description: |
+        ユーザー認証が失敗した時に出るステータスコードです。
       content:
         "application/json":
           schema:
-            description: "エラー"
             type: object
             properties:
               message:
                 title: "エラーメッセージ"
                 type: string
-                example: "user not found or password incorrect"
+    500Error:
+      description: |
+        サーバー側で処理が失敗した時に出るステータスコードです。
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              message:
+                title: "エラーメッセージ"
+                type: string
