@@ -115,12 +115,12 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                id:
                   type: string
                 password:
                   type: string
               required:
-                - name
+                - id
                 - password
       responses:
         "200":

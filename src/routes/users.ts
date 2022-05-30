@@ -8,3 +8,5 @@ const userController = new UserController();
 
 router.get("/", userController.getAllUsers);
 router.post("/", userController.createUser);
+router.get("/:id", userController.getUser);
+router.put("/:id", userController.updateUser);

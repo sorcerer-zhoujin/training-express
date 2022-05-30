@@ -1,6 +1,4 @@
-import { json } from "node:stream/consumers";
 import { db_pool } from "../helpers/DBHelper";
-import { User } from "../interfaces/User";
 
 const getAllUsers = async () => {
   const [rows, fields] = await db_pool
@@ -20,4 +18,23 @@ const createUser = async (data: any[]) => {
   return (rows as any).insertId;
 };
 
-export { getAllUsers, createUser };
+const getUser = async (id: number) => {
+  const [rows, fields] = await db_pool
+    .promise()
+    .query("SELECT * FROM `users` WHERE `id` = ?", id);
+  return rows;
+};
+
+const updateUser = async (data: any[]) => {
+  const [rows, fields] = await db_pool
+    .promise()
+    .query(
+      "UPDATE `users` SET `name`=?, `password`=?, `money`=?, `hp`=? WHERE `id` = ?",
+      data
+    );
+
+  console.log(rows);
+  return rows as any;
+};
+
+export { getAllUsers, createUser, getUser, updateUser };

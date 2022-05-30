@@ -2,13 +2,14 @@ import * as express from "express";
 import * as foo from "./foo";
 import * as users from "./users";
 
-import { HogeController } from "../controllers";
+import { HogeController, UserController } from "../controllers";
 
 import { db_connection } from "../helpers/DBHelper";
 
 export const router = express.Router();
 
 const hogeController = new HogeController();
+const userController = new UserController();
 
 router.get("/", (req, res, next) => {
   res.status(200);
@@ -32,3 +33,4 @@ router.get("/db", (req, res, next) => {
 });
 
 router.use("/users", users.router);
+router.post("/login", userController.login);
