@@ -52,6 +52,8 @@ paths:
                 properties:
                   id:
                     type: integer
+        "400":
+          $ref: "#/components/responses/400Error"
         "500":
           $ref: "#/components/responses/500Error"
 
@@ -74,6 +76,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/400Error"
         "404":
           $ref: "#/components/responses/404Error"
         "500":
@@ -99,6 +103,8 @@ paths:
       responses:
         "200":
           description: リクエストが成功した時に出るステータスコードです。
+        "400":
+          $ref: "#/components/responses/400Error"
         "404":
           $ref: "#/components/responses/404Error"
         "500":
@@ -125,6 +131,8 @@ paths:
       responses:
         "200":
           description: リクエストが成功した時に出るステータスコードです。
+        "400":
+          $ref: "#/components/responses/400Error"
         "401":
           $ref: "#/components/responses/401Error"
         "500":
@@ -153,6 +161,8 @@ paths:
       responses:
         "200":
           description: リクエストが成功した時に出るステータスコードです。
+        "400":
+          $ref: "#/components/responses/400Error"
         "403":
           $ref: "#/components/responses/403Error"
         "404":
@@ -195,6 +205,8 @@ paths:
       responses:
         "200":
           description: リクエストが成功した時に出るステータスコードです。
+        "400":
+          $ref: "#/components/responses/400Error"
         "403":
           $ref: "#/components/responses/403Error"
         "404":
@@ -237,6 +249,8 @@ paths:
                 properties:
                   id:
                     type: integer
+        "400":
+          $ref: "#/components/responses/400Error"
         "500":
           $ref: "#/components/responses/500Error"
 
@@ -259,6 +273,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
+        "400":
+          $ref: "#/components/responses/400Error"
         "500":
           $ref: "#/components/responses/500Error"
     put:
@@ -280,6 +296,8 @@ paths:
       responses:
         "200":
           description: リクエストが成功した時に出るステータスコードです。
+        "400":
+          $ref: "#/components/responses/400Error"
         "404":
           $ref: "#/components/responses/404Error"
         "500":
@@ -298,6 +316,8 @@ paths:
       responses:
         "200":
           description: リクエストが成功した時に出るステータスコードです。
+        "400":
+          $ref: "#/components/responses/400Error"
         "404":
           $ref: "#/components/responses/404Error"
         "500":
@@ -379,6 +399,17 @@ components:
     500Error:
       description: |
         サーバー側で処理が失敗した時に出るステータスコードです。
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              message:
+                title: "エラーメッセージ"
+                type: string
+    400Error:
+      description: |
+        リクエストのパラメータかボディが違った時に出るステータスコードです。
       content:
         "application/json":
           schema:

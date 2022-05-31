@@ -5,9 +5,17 @@ import {
   getUserSrv,
   updateUserSrv,
   loginSrv,
+  buyItemSrv,
+  useItemSrv,
 } from "../services/UserService";
 
-import { DBError, NotFoundError, AuthError } from "../interfaces/my-error";
+import {
+  DBError,
+  NotFoundError,
+  AuthError,
+  NotEnoughError,
+  LimitExceededError,
+} from "../interfaces/my-error";
 
 const log = require("log4js").getLogger("index");
 
@@ -19,9 +27,7 @@ export class UserController {
       res.status(200);
       res.json(result);
     } catch (e) {
-      if (e instanceof DBError) {
-        res.status(500).end();
-      }
+      throw e;
     }
   }
 
@@ -42,9 +48,10 @@ export class UserController {
       res.status(200);
       res.json({ id: result });
     } catch (e) {
-      if (e instanceof DBError) {
-        res.status(500).end();
-      }
+      // if (e instanceof DBError) {
+      //   res.status(500).end();
+      // }
+      throw e;
     }
   }
 
@@ -61,10 +68,10 @@ export class UserController {
       res.status(200);
       res.json(result);
     } catch (e) {
-      if (e instanceof DBError) {
-        res.status(500).end();
-      } else if (e instanceof NotFoundError) {
+      if (e instanceof NotFoundError) {
         res.status(404).end();
+      } else {
+        throw e;
       }
     }
   }
@@ -88,10 +95,10 @@ export class UserController {
         res.status(200).end();
       }
     } catch (e) {
-      if (e instanceof DBError) {
-        res.status(500).end();
-      } else if (e instanceof NotFoundError) {
+      if (e instanceof NotFoundError) {
         res.status(404).end();
+      } else {
+        throw e;
       }
     }
   }
@@ -109,17 +116,57 @@ export class UserController {
         res.status(200).end();
       }
     } catch (e) {
-      if (e instanceof DBError) {
-        res.status(500).end();
-      } else if (e instanceof AuthError) {
+      if (e instanceof AuthError) {
         res.status(401).end(e.message);
+      } else {
+        throw e;
       }
     }
   }
 
-  async buyItem(req: Request, res: Response) {}
+  async buyItem(req: Request, res: Response) {
+    if (!req.body.id || !req.body.item_id || !req.body.num) {
+      res.status(400);
+      res.json({ message: "Invalid parameters or body." });
+      return;
+    }
 
-  async useItem(req: Request, res: Response) {}
+    try {
+      const result = await buyItemSrv(req.body);
+      res.status(200).end();
+    } catch (e) {
+      if (e instanceof NotEnoughError) {
+        res.status(403).end();
+      } else if (e instanceof NotFoundError) {
+        res.status(404).end();
+      } else if (e instanceof LimitExceededError) {
+        res.status(405).end();
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  async useItem(req: Request, res: Response) {
+    if (!req.body.id || !req.body.item_id || !req.body.num) {
+      res.status(400);
+      res.json({ message: "Invalid parameters or body." });
+      return;
+    }
+
+    try {
+      const result = await useItemSrv(req.body);
+      res.status(200).end();
+    } catch (e) {
+      if (e instanceof NotEnoughError) {
+        res.status(403).end();
+      } else if (e instanceof NotFoundError) {
+        res.status(404).end();
+      } else {
+        throw e;
+      }
+    }
+  }
 
   /**
    * next(err)を投げるとapp.tsでエラーハンドリングできます。

@@ -15,14 +15,14 @@ const createUser = async (data: any[]) => {
       data
     );
 
-  return (rows as any).insertId;
+  return (rows as any).insertId as number;
 };
 
 const getUser = async (id: number) => {
   const [rows, fields] = await db_pool
     .promise()
     .query("SELECT * FROM `users` WHERE `id` = ?", id);
-  return rows;
+  return (rows as any)[0];
 };
 
 const updateUser = async (data: any[]) => {
@@ -33,8 +33,7 @@ const updateUser = async (data: any[]) => {
       data
     );
 
-  console.log(rows);
-  return rows as any;
+  return (rows as any).affectedRows != 0 ? true : false;
 };
 
 export { getAllUsers, createUser, getUser, updateUser };

@@ -10,3 +10,5 @@ router.get("/", userController.getAllUsers);
 router.post("/", userController.createUser);
 router.get("/:id", userController.getUser);
 router.put("/:id", userController.updateUser);
+router.post("/buy_item", userController.buyItem);
+router.post("/use_item", userController.useItem);
