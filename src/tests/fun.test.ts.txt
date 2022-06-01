@@ -4,7 +4,6 @@ describe("fun test", () => {
   test("fun", () => {
     fun3.show();
     fun3.show();
-    fun3.show();
   });
   // test("async", () => {
   //   let r = 0;

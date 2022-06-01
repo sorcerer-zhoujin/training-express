@@ -20,18 +20,18 @@ import {
 const log = require("log4js").getLogger("index");
 
 export class UserController {
-  async getAllUsers(req: Request, res: Response) {
+  async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await getAllUsersSrv();
 
       res.status(200);
       res.json(result);
     } catch (e) {
-      throw e;
+      next(e);
     }
   }
 
-  async createUser(req: Request, res: Response) {
+  async createUser(req: Request, res: Response, next: NextFunction) {
     if (
       !req.body.name ||
       !req.body.password ||
@@ -51,11 +51,11 @@ export class UserController {
       // if (e instanceof DBError) {
       //   res.status(500).end();
       // }
-      throw e;
+      next(e);
     }
   }
 
-  async getUser(req: Request, res: Response) {
+  async getUser(req: Request, res: Response, next: NextFunction) {
     if (!req.params.id) {
       res.status(400);
       res.json({ message: "Invalid parameters or body." });
@@ -71,12 +71,12 @@ export class UserController {
       if (e instanceof NotFoundError) {
         res.status(404).end();
       } else {
-        throw e;
+        next(e);
       }
     }
   }
 
-  async updateUser(req: Request, res: Response) {
+  async updateUser(req: Request, res: Response, next: NextFunction) {
     if (
       !req.params.id ||
       !req.body.name ||
@@ -98,12 +98,12 @@ export class UserController {
       if (e instanceof NotFoundError) {
         res.status(404).end();
       } else {
-        throw e;
+        next(e);
       }
     }
   }
 
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     if (!req.body.id || !req.body.password) {
       res.status(400);
       res.json({ message: "Invalid parameters or body." });
@@ -119,12 +119,12 @@ export class UserController {
       if (e instanceof AuthError) {
         res.status(401).end(e.message);
       } else {
-        throw e;
+        next(e);
       }
     }
   }
 
-  async buyItem(req: Request, res: Response) {
+  async buyItem(req: Request, res: Response, next: NextFunction) {
     if (!req.body.id || !req.body.item_id || !req.body.num) {
       res.status(400);
       res.json({ message: "Invalid parameters or body." });
@@ -142,12 +142,12 @@ export class UserController {
       } else if (e instanceof LimitExceededError) {
         res.status(405).end();
       } else {
-        throw e;
+        next(e);
       }
     }
   }
 
-  async useItem(req: Request, res: Response) {
+  async useItem(req: Request, res: Response, next: NextFunction) {
     if (!req.body.id || !req.body.item_id || !req.body.num) {
       res.status(400);
       res.json({ message: "Invalid parameters or body." });
@@ -163,7 +163,7 @@ export class UserController {
       } else if (e instanceof NotFoundError) {
         res.status(404).end();
       } else {
-        throw e;
+        next(e);
       }
     }
   }

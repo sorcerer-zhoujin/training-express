@@ -4,7 +4,7 @@ const getAllUsers = async () => {
   const [rows, fields] = await db_pool
     .promise()
     .query("SELECT * FROM `users`;");
-  return rows;
+  return rows as any;
 };
 
 const createUser = async (data: any[]) => {

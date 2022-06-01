@@ -1,0 +1,20 @@
+import {
+  getAllUsers,
+  createUser,
+  getUser,
+  updateUser,
+} from "../models/UserModel";
+
+test("get all users", async () => {
+  const result = await getAllUsers();
+  expect(result).toHaveLength(6);
+});
+
+test("get user", async () => {
+  expect(await getUser(1)).toHaveProperty("id");
+  expect(await getUser(100)).toBeUndefined();
+});
+
+// test("create user", async () => {});
+
+// test("update user", async () => {});
