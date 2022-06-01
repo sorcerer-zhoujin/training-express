@@ -15,6 +15,9 @@ import {
   LimitExceededError,
 } from "../interfaces/my-error";
 
+import { User, UserLogin } from "../interfaces/User";
+import { UserItemInput, UserItemOutput } from "../interfaces/user-item";
+
 const MAX_ITEMS_NUM = 20;
 
 const getAllUsersSrv = async () => {
@@ -22,22 +25,14 @@ const getAllUsersSrv = async () => {
   return result;
 };
 
-const createUserSrv = async (data: any) => {
-  let arr: any[] = [];
-  arr.push(data.name);
-  arr.push(data.password);
-  arr.push(data.money);
-  arr.push(data.hp);
-
-  const result: number = await createUser(arr);
+const createUserSrv = async (data: User) => {
+  const result: number = await createUser(data);
   return result;
 };
 
-const getUserSrv = async (data: any) => {
-  let id = data.id;
-
+const getUserSrv = async (data: number) => {
   try {
-    const result = await getUser(id);
+    const result = await getUser(data);
 
     if (result) {
       return result;
@@ -50,17 +45,9 @@ const getUserSrv = async (data: any) => {
   }
 };
 
-const updateUserSrv = async (params: any, data: any) => {
-  let id = parseInt(params.id);
-  let arr: any[] = [];
-  arr.push(data.name);
-  arr.push(data.password);
-  arr.push(data.money);
-  arr.push(data.hp);
-  arr.push(id);
-
+const updateUserSrv = async (data: User) => {
   try {
-    const result: boolean = await updateUser(arr);
+    const result: boolean = await updateUser(data);
 
     if (result) {
       return result;
@@ -73,11 +60,9 @@ const updateUserSrv = async (params: any, data: any) => {
   }
 };
 
-const loginSrv = async (data: any) => {
-  let id = data.id;
-
+const loginSrv = async (data: UserLogin) => {
   try {
-    const result: any = await getUser(id);
+    const result: User = await getUser(data.id);
 
     // password check
     if (result && result.password == data.password) {
@@ -91,44 +76,39 @@ const loginSrv = async (data: any) => {
   }
 };
 
-const buyItemSrv = async (data: any) => {
-  const id = data.id;
-  const item_id = data.item_id;
-  const num = data.num;
-
+const buyItemSrv = async (data: UserItemInput) => {
   //logic
   try {
     //1. get user_item data
-    let user_item: any = await getUserItem(id, item_id);
-    let user: any = await getUser(id);
+    let user_item = await getUserItem(data);
+    let user = await getUser(data.id);
     let item_price = 1; //TODO
 
     if (!user_item) {
       throw new NotFoundError();
     }
     //2. if limit?
-    if (user_item.num + num > MAX_ITEMS_NUM) {
+    if (user_item.num + data.num > MAX_ITEMS_NUM) {
       throw new LimitExceededError();
     }
     //3. if money?
-    let cost = item_price * num;
-    if (cost > user.money) {
+    let cost = item_price * data.num;
+    if (cost > user.money!) {
       throw new NotEnoughError();
     }
 
     //3.1 items += num;
-    user_item.num += num;
+    user_item.num += data.num;
+    updateUserItem({ id: data.id, item_id: data.item_id, num: user_item.num });
     //3.2 money -= cost;
-    user.money -= cost;
-    updateUserItem(id, item_id, user_item.num);
-
-    let arr: any[] = [];
-    arr.push(user.name);
-    arr.push(user.password);
-    arr.push(user.money);
-    arr.push(user.hp);
-    arr.push(id);
-    updateUser(arr);
+    user.money! -= cost;
+    updateUser({
+      id: data.id,
+      name: user.name,
+      password: user.password,
+      money: user.money,
+      hp: user.hp,
+    });
   } catch (e) {
     if (e instanceof NotEnoughError) throw new NotEnoughError();
     else if (e instanceof NotFoundError) throw new NotFoundError();
@@ -137,30 +117,27 @@ const buyItemSrv = async (data: any) => {
   }
 };
 
-const useItemSrv = async (data: any) => {
-  const id = data.id;
-  const item_id = data.item_id;
-  const num = data.num;
-
+const useItemSrv = async (data: UserItemInput) => {
   //logic
   try {
     //1. get user_item data
-    let user_item: any = await getUserItem(id, item_id);
-    let user: any = await getUser(id);
-    let item_heal = 10; //TODO
+    let user_item = await getUserItem(data);
+    let user = await getUser(data.id);
+    let item_heal = 1; //TODO
+
     if (!user_item) {
       throw new NotFoundError();
     }
 
     //3. if enough?
-    if (num > user_item.num) {
+    if (data.num > user_item.num) {
       throw new NotEnoughError();
     }
 
     //3.1 items -= num;
-    user_item.num += num;
+    user_item.num += data.num;
     //3.2 hp += heal;
-    user.hp += item_heal * num;
+    user.hp! += item_heal * data.num;
   } catch (e) {
     if (e instanceof NotEnoughError) throw new NotEnoughError();
     else if (e instanceof NotFoundError) throw new NotFoundError();

@@ -56,14 +56,14 @@ export class UserController {
   }
 
   async getUser(req: Request, res: Response, next: NextFunction) {
-    if (!req.params.id) {
+    if (!req.params.id || parseInt(req.params.id) == undefined) {
       res.status(400);
       res.json({ message: "Invalid parameters or body." });
       return;
     }
 
     try {
-      const result = await getUserSrv(req.params);
+      const result = await getUserSrv(parseInt(req.params.id));
 
       res.status(200);
       res.json(result);
@@ -90,7 +90,13 @@ export class UserController {
     }
 
     try {
-      const result = await updateUserSrv(req.params, req.body);
+      const id = parseInt(req.params.id);
+      const name = req.body.name;
+      const password = req.body.password;
+      const money = parseInt(req.body.money);
+      const hp = parseInt(req.body.hp);
+
+      const result = await updateUserSrv({ id, name, password, money, hp });
       if (result) {
         res.status(200).end();
       }
@@ -111,7 +117,9 @@ export class UserController {
     }
 
     try {
-      const result = await loginSrv(req.body);
+      const id = parseInt(req.body.id);
+      const password = req.body.password;
+      const result = await loginSrv({ id, password });
       if (result) {
         res.status(200).end();
       }
@@ -132,7 +140,10 @@ export class UserController {
     }
 
     try {
-      const result = await buyItemSrv(req.body);
+      const id = parseInt(req.body.id);
+      const item_id = parseInt(req.body.item_id);
+      const num = parseInt(req.body.num);
+      const result = await buyItemSrv({ id, item_id, num });
       res.status(200).end();
     } catch (e) {
       if (e instanceof NotEnoughError) {
@@ -155,7 +166,10 @@ export class UserController {
     }
 
     try {
-      const result = await useItemSrv(req.body);
+      const id = parseInt(req.body.id);
+      const item_id = parseInt(req.body.item_id);
+      const num = parseInt(req.body.num);
+      const result = await useItemSrv({ id, item_id, num });
       res.status(200).end();
     } catch (e) {
       if (e instanceof NotEnoughError) {

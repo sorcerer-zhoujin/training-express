@@ -1,39 +1,49 @@
 import { db_pool } from "../helpers/DBHelper";
+import { User } from "../interfaces/User";
+import { RowDataPacket, OkPacket } from "mysql2";
 
-const getAllUsers = async () => {
-  const [rows, fields] = await db_pool
-    .promise()
-    .query("SELECT * FROM `users`;");
-  return rows as any;
+const getAllUsers = async (): Promise<User[]> => {
+  const [rows] = await db_pool.promise().query("SELECT * FROM `users`;");
+
+  const result: User[] = (rows as any).map((row: User) => {
+    return {
+      id: row.id,
+      name: row.name,
+      password: row.password,
+      money: row.money,
+      hp: row.hp,
+    };
+  });
+  return result;
 };
 
-const createUser = async (data: any[]) => {
-  const [rows, fields] = await db_pool
+const createUser = async (data: User): Promise<number> => {
+  const [rows] = await db_pool
     .promise()
     .query(
       "INSERT INTO `users` (`name`, `password`, `money`, `hp`) VALUES (?,?,?,?)",
-      data
+      [data.name, data.password, data.money, data.hp]
     );
 
-  return (rows as any).insertId as number;
+  return (rows as OkPacket).insertId;
 };
 
-const getUser = async (id: number) => {
-  const [rows, fields] = await db_pool
+const getUser = async (id: number): Promise<User> => {
+  const [rows] = await db_pool
     .promise()
     .query("SELECT * FROM `users` WHERE `id` = ?", id);
   return (rows as any)[0];
 };
 
-const updateUser = async (data: any[]) => {
-  const [rows, fields] = await db_pool
+const updateUser = async (data: User): Promise<boolean> => {
+  const [rows] = await db_pool
     .promise()
     .query(
       "UPDATE `users` SET `name`=?, `password`=?, `money`=?, `hp`=? WHERE `id` = ?",
-      data
+      [data.name, data.password, data.money, data.hp, data.id]
     );
 
-  return (rows as any).affectedRows != 0 ? true : false;
+  return (rows as any).affectedRows != 0;
 };
 
 export { getAllUsers, createUser, getUser, updateUser };

@@ -1,23 +1,24 @@
 import { db_pool } from "../helpers/DBHelper";
+import { UserItemInput, UserItemOutput } from "../interfaces/user-item";
 
-const getUserItem = async (id: number, item_id: number) => {
-  const [rows, fields] = await db_pool
+const getUserItem = async (data: UserItemInput): Promise<UserItemOutput> => {
+  const [rows] = await db_pool
     .promise()
     .query("SELECT * FROM `users_items` WHERE `user_id` = ? && `item_id` =?", [
-      id,
-      item_id,
+      data.id,
+      data.item_id,
     ]);
   return (rows as any)[0];
 };
 
-const updateUserItem = async (id: number, item_id: number, num: number) => {
-  const [rows, fields] = await db_pool
+const updateUserItem = async (data: UserItemInput): Promise<boolean> => {
+  const [rows] = await db_pool
     .promise()
     .query(
       "UPDATE `users_items` SET  `num`= ? WHERE `id` = ? && `item_id` = ?",
-      [num, id, item_id]
+      [data.num, data.id, data.item_id]
     );
-  return (rows as any).affectedRows != 0 ? true : false;
+  return (rows as any).affectedRows != 0;
 };
 
 export { getUserItem, updateUserItem };
