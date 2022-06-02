@@ -1,5 +1,6 @@
 import { db_pool } from "../helpers/DBHelper";
 import { UserItemInput, UserItemOutput } from "../interfaces/user-item";
+import { NotFoundError } from "../interfaces/my-error";
 
 const getUserItem = async (data: UserItemInput): Promise<UserItemOutput> => {
   const [rows] = await db_pool
@@ -8,7 +9,8 @@ const getUserItem = async (data: UserItemInput): Promise<UserItemOutput> => {
       data.id,
       data.item_id,
     ]);
-  return (rows as any)[0];
+  if ((rows as any)[0]) return (rows as any)[0];
+  else throw new NotFoundError();
 };
 
 const updateUserItem = async (data: UserItemInput): Promise<boolean> => {

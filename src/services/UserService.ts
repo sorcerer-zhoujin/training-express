@@ -33,12 +33,7 @@ const createUserSrv = async (data: User) => {
 const getUserSrv = async (data: number) => {
   try {
     const result = await getUser(data);
-
-    if (result) {
-      return result;
-    } else {
-      throw new NotFoundError();
-    }
+    return result;
   } catch (e) {
     if (e instanceof NotFoundError) throw new NotFoundError();
     else throw e;
@@ -84,9 +79,6 @@ const buyItemSrv = async (data: UserItemInput) => {
     let user = await getUser(data.id);
     let item_price = 1; //TODO
 
-    if (!user_item) {
-      throw new NotFoundError();
-    }
     //2. if limit?
     if (user_item.num + data.num > MAX_ITEMS_NUM) {
       throw new LimitExceededError();
@@ -124,10 +116,6 @@ const useItemSrv = async (data: UserItemInput) => {
     let user_item = await getUserItem(data);
     let user = await getUser(data.id);
     let item_heal = 1; //TODO
-
-    if (!user_item) {
-      throw new NotFoundError();
-    }
 
     //3. if enough?
     if (data.num > user_item.num) {

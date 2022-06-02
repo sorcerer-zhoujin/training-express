@@ -1,6 +1,7 @@
 import { db_pool } from "../helpers/DBHelper";
 import { User } from "../interfaces/User";
 import { RowDataPacket, OkPacket } from "mysql2";
+import { NotFoundError } from "../interfaces/my-error";
 
 const getAllUsers = async (): Promise<User[]> => {
   const [rows] = await db_pool.promise().query("SELECT * FROM `users`;");
@@ -32,7 +33,9 @@ const getUser = async (id: number): Promise<User> => {
   const [rows] = await db_pool
     .promise()
     .query("SELECT * FROM `users` WHERE `id` = ?", id);
-  return (rows as any)[0];
+
+  if ((rows as any)[0]) return (rows as any)[0];
+  else throw new NotFoundError();
 };
 
 const updateUser = async (data: User): Promise<boolean> => {
