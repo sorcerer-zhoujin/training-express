@@ -120,6 +120,43 @@ db_connection.query(
 );
 ```
 
+## DBマイグレーション
+### 接続先を .env ファイルに設定します。
+```
+DATABASE_URL=<driver>://<user>:<password>@<address>:<port>/<database>
+```
+
+### DBを初期化、最新にする
+```
+npm run db-migrate-up
+```
+
+### DBを消す
+```
+npm run db-migrate-down
+```
+
+### DBを全部消す(最初からやり直したい時など)
+```
+npm run db-migrate-reset
+```
+
+### マイグレーションを作成する
+```
+npx db-migrate create add-people --sql-file
+```
+この時、以下の３つのファイルが作成されます。
+```
+./migrations/20111219120000-add-people.js
+./migrations/sqls/20111219120000-add-people-up.sql
+./migrations/sqls/20111219120000-add-people-down.sql
+```
+
+up にはバージョンアップに伴う変更を。
+down にはバージョンダウンに伴う変更を記述します。
+基本的に1ファイルにつき、1テーブルの変更を書きます。
+
+
 ## ユニットテスト--jest
 
 jest を typescript で使うhttps://github.com/kulshekhar/ts-jest
