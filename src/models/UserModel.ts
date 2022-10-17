@@ -4,7 +4,7 @@ import { RowDataPacket, OkPacket } from "mysql2";
 import { NotFoundError } from "../interfaces/my-error";
 
 const getAllUsers = async (): Promise<User[]> => {
-  const [rows] = await db_pool.promise().query("SELECT * FROM `users`;");
+  const [rows] = await db_pool.query("SELECT * FROM `users`;");
 
   const result: User[] = (rows as any).map((row: User) => {
     return {
@@ -20,7 +20,6 @@ const getAllUsers = async (): Promise<User[]> => {
 
 const createUser = async (data: User): Promise<number> => {
   const [rows] = await db_pool
-    .promise()
     .query(
       "INSERT INTO `users` (`name`, `password`, `money`, `hp`) VALUES (?,?,?,?)",
       [data.name, data.password, data.money, data.hp]
@@ -31,7 +30,6 @@ const createUser = async (data: User): Promise<number> => {
 
 const getUser = async (id: number): Promise<User> => {
   const [rows] = await db_pool
-    .promise()
     .query("SELECT * FROM `users` WHERE `id` = ?", id);
 
   if ((rows as any)[0]) return (rows as any)[0];
@@ -40,7 +38,6 @@ const getUser = async (id: number): Promise<User> => {
 
 const updateUser = async (data: User): Promise<boolean> => {
   const [rows] = await db_pool
-    .promise()
     .query(
       "UPDATE `users` SET `name`=?, `password`=?, `money`=?, `hp`=? WHERE `id` = ?",
       [data.name, data.password, data.money, data.hp, data.id]
