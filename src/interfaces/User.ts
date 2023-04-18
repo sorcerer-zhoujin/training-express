@@ -6,9 +6,4 @@ interface User {
   hp?: number;
 }
 
-interface UserLogin {
-  id: number;
-  password: string;
-}
-
-export { User, UserLogin };
+export { User };

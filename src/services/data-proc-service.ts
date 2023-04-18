@@ -1,4 +1,4 @@
-import * as DateHelper from "../helpers/DateHelper";
+import * as DateHelper from "../helpers/date-helper";
 
 /**
  * 仮のビジネスロジックです。

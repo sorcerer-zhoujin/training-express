@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 import express from "express";
 import { Request, Response, NextFunction } from "express";
 import path from "path";

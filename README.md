@@ -66,23 +66,6 @@ src
 
 - GET localhost:3000/errorSample
 
-## TODO
-
-- ユニットテスト
-
-## 2022/05/23 project update
-
-### package.json 内の package 更新
-
-```bash
-# install npm-check-updates
-npm install -g npm-check-updates
-cd path/to/project
-ncu
-ncu -u
-npm install
-```
-
 ### エラー解決
 
 ```bash
@@ -97,55 +80,51 @@ npm update @types/express-serve-static-core --depth 2
 npm update @types/serve-static --depth 2
 ```
 
-## mysql2
+## docker 起動
 
-https://www.npmjs.com/package/mysql2
+起動前に、前の docker container を閉じる
 
-- 設定ファイル:
-  - /config/mysql.json
-- 関数化
-  - /src/helpers/DBHelper.ts
-
-使用例:
-
-```ts
-import { db_connection } from "../helpers/DBHelper";
-
-let results;
-db_connection.query(
-  "SELECT COUNT(*) FROM `tweets`;",
-  (err, results, fields) => {
-    results = results;
-  }
-);
+```bash
+cd docker
+docker-compose up -d
 ```
 
-## DBマイグレーション
+## DB マイグレーション
+
+https://db-migrate.readthedocs.io/en/latest/Getting%20Started/installation/#installation
+
 ### 接続先を .env ファイルに設定します。
+
 ```
 DATABASE_URL=<driver>://<user>:<password>@<address>:<port>/<database>
 ```
 
-### DBを初期化、最新にする
+### DB を初期化、最新にする
+
 ```
 npm run db-migrate-up
 ```
 
-### DBを消す
+### DB を消す
+
 ```
 npm run db-migrate-down
 ```
 
-### DBを全部消す(最初からやり直したい時など)
+### DB を全部消す(最初からやり直したい時など)
+
 ```
 npm run db-migrate-reset
 ```
 
 ### マイグレーションを作成する
+
 ```
 npx db-migrate create add-people --sql-file
 ```
+
 この時、以下の３つのファイルが作成されます。
+
 ```
 ./migrations/20111219120000-add-people.js
 ./migrations/sqls/20111219120000-add-people-up.sql
@@ -154,10 +133,22 @@ npx db-migrate create add-people --sql-file
 
 up にはバージョンアップに伴う変更を。
 down にはバージョンダウンに伴う変更を記述します。
-基本的に1ファイルにつき、1テーブルの変更を書きます。
+基本的に 1 ファイルにつき、1 テーブルの変更を書きます。
 
+## 2022/05/23 project update についてメモ
 
-## ユニットテスト--jest
+### package.json 内の package 更新
+
+```bash
+# install npm-check-updates
+npm install -g npm-check-updates
+cd path/to/project
+ncu
+ncu -u
+npm install
+```
+
+## 新しいプロジェクトにユニットテスト--jest を追加方法
 
 jest を typescript で使うhttps://github.com/kulshekhar/ts-jest
 
@@ -194,31 +185,8 @@ module.exports = {
 };
 ```
 
-4. test ファイルは`src/tests`に置く
-
-テスト例:
-
-math.ts
-
-```ts
-const add = (a: number, b: number) => {
-  return a + b;
-};
-
-export { add };
-```
-
-math.test.ts
-
-```ts
-import { add } from "./math";
-
-test("add", () => {
-  expect(add(1, 2)).toBe(3);
-});
-```
-
-`npm run test`を実行したら
+4. test を実行
+   `npm run test`を実行したら
 
 ```bash
  PASS  src/tests/add.test.ts
