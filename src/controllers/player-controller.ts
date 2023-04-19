@@ -2,6 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import * as playerService from "../services/player-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
 import { Player } from "../interfaces/player";
+import { NotFoundError } from "../interfaces/my-error";
 
 export class PlayerController {
   async getAllPlayers(
@@ -28,10 +29,14 @@ export class PlayerController {
       return;
     }
     const dbConnection = await dbPool.getConnection();
-    const result = await playerService.getPlayerById(playerId, dbConnection);
 
-    res.status(200);
-    res.json(result);
+    try {
+      const result = await playerService.getPlayerById(playerId, dbConnection);
+      res.status(200).json(result);
+    } catch (e: any) {
+      console.error(e.message);
+      res.status(404).json({message: e.message });
+    }
   }
 
   async createPlayer(
@@ -122,10 +127,6 @@ export class PlayerController {
     } catch (e) {
       next(e);
     }
-    // const result = await playerService.deletePlayer(playerId, dbConnection);
-
-    // res.status(200);
-    // res.json(result);
   }
 
   /**

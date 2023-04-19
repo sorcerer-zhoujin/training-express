@@ -1,6 +1,7 @@
 import { PoolConnection } from "mysql2/promise";
 import { Player } from "../interfaces/player";
 import { RowDataPacket, OkPacket } from "mysql2";
+import { NotFoundError } from "../interfaces/my-error";
 
 const getAllPlayers = async (dbConnection: PoolConnection): Promise<Player[]> => {
   const [rows] = await dbConnection.query<RowDataPacket[]>(
@@ -25,14 +26,19 @@ const getPlayerById = async (playerId: number, dbConnection: PoolConnection): Pr
     [playerId]
   );
 
-  const result: Player = {
-      id: row.id,
-      name: row.name,
-      money: row.money,
-      hp: row.hp,
-      mp: row.mp
-    };
+  if (!row) {
+    console.log(row);
+    throw new NotFoundError("Player not found.");
+  }
 
+  const result: Player = {
+    id: row.id,
+    name: row.name,
+    money: row.money,
+    hp: row.hp,
+    mp: row.mp
+  };
+  console.log(result);
   return result;
 }
 
