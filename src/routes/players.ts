@@ -5,4 +5,5 @@ export const router = express.Router();
 const playerController = new PlayerController();
 
 router.get("/", playerController.getAllPlayers);
+router.get("/:playerId", playerController.getPlayerById);
 router.post("/", playerController.createPlayer);

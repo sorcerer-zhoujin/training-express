@@ -7,6 +7,11 @@ const getAllPlayers = async (dbConnection: PoolConnection): Promise<Player[]> =>
   return result;
 };
 
+const getPlayerById = async (playerId: number, dbConnection: PoolConnection): Promise<Player[]> => {
+  const result = await playerModel.getPlayerById(playerId, dbConnection);
+  return result;
+}
+
 const createPlayer = async (
   data: Player,
   dbConnection: PoolConnection
@@ -15,4 +20,4 @@ const createPlayer = async (
   return result;
 };
 
-export { getAllPlayers, createPlayer };
+export { getAllPlayers, getPlayerById, createPlayer };
