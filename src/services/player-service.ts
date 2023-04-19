@@ -7,7 +7,7 @@ const getAllPlayers = async (dbConnection: PoolConnection): Promise<Player[]> =>
   return result;
 };
 
-const getPlayerById = async (playerId: number, dbConnection: PoolConnection): Promise<Player[]> => {
+const getPlayerById = async (playerId: number, dbConnection: PoolConnection): Promise<Player> => {
   const result = await playerModel.getPlayerById(playerId, dbConnection);
   return result;
 }

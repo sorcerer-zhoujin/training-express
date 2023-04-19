@@ -19,21 +19,20 @@ const getAllPlayers = async (dbConnection: PoolConnection): Promise<Player[]> =>
   return result;
 };
 
-const getPlayerById = async (playerId: number, dbConnection: PoolConnection): Promise<Player[]> => {
-  const [rows] = await dbConnection.query<RowDataPacket[]>(
+const getPlayerById = async (playerId: number, dbConnection: PoolConnection): Promise<Player> => {
+  const [[row]] = await dbConnection.query<RowDataPacket[]>(
     "SELECT * FROM `players` WHERE `id` = ?",
     [playerId]
   );
 
-  const result: Player[] = rows.map((row) => {
-    return {
+  const result: Player = {
       id: row.id,
       name: row.name,
       money: row.money,
       hp: row.hp,
       mp: row.mp
     };
-  });
+
   return result;
 }
 
