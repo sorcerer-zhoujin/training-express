@@ -74,4 +74,13 @@ const updatePlayer = async (
   return value;
 }
 
-export { getAllPlayers, getPlayerById, createPlayer, updatePlayer };
+const deletePlayer = async (playerId: number, dbConnection: PoolConnection): Promise<number> => {
+  const [rows] = await dbConnection.query<OkPacket>(
+    "DELETE FROM `players` WHERE `id` = ?",
+    [playerId]
+  );
+
+  return rows.affectedRows;
+}
+
+export { getAllPlayers, getPlayerById, createPlayer, updatePlayer, deletePlayer };

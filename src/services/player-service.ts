@@ -29,4 +29,9 @@ const updatePlayer = async (
   return result;
 }
 
-export { getAllPlayers, getPlayerById, createPlayer, updatePlayer };
+const deletePlayer = async (playerId: number, dbConnection: PoolConnection): Promise<number> => {
+  const result = await playerModel.deletePlayer(playerId, dbConnection);
+  return result;
+}
+
+export { getAllPlayers, getPlayerById, createPlayer, updatePlayer, deletePlayer };

@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import { getAllPlayers, getPlayerById, createPlayer, updatePlayer } from "../services/player-service";
+import { getAllPlayers, getPlayerById, createPlayer, updatePlayer, deletePlayer } from "../services/player-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
 import { Player } from "../interfaces/player";
 
@@ -98,6 +98,24 @@ export class PlayerController {
     } catch (e) {
       next(e);
     }
+  }
+
+  async deletePlayer(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const playerId: number  = parseInt(req.params.playerId, 10);
+    if (isNaN(playerId))
+    {
+      res.status(400).json({ message: "Invalid parameters or body." });
+      return;
+    }
+    const dbConnection = await dbPool.getConnection();
+    const result = await deletePlayer(playerId, dbConnection);
+
+    res.status(200);
+    res.json(result);
   }
 
   /**

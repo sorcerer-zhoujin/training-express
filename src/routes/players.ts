@@ -8,3 +8,4 @@ router.get("/", playerController.getAllPlayers);
 router.get("/:playerId", playerController.getPlayerById);
 router.post("/", playerController.createPlayer);
 router.post("/:playerId", playerController.updatePlayer);
+router.delete("/:playerId", playerController.deletePlayer);
