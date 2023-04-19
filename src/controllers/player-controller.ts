@@ -112,10 +112,20 @@ export class PlayerController {
       return;
     }
     const dbConnection = await dbPool.getConnection();
-    const result = await playerService.deletePlayer(playerId, dbConnection);
+    try {
+      let result: number;
+      // トランザクション
+      await transactionHelper(dbConnection, async () => {
+        result = await playerService.deletePlayer(playerId, dbConnection);
+      });
+      res.status(200).json(result!);
+    } catch (e) {
+      next(e);
+    }
+    // const result = await playerService.deletePlayer(playerId, dbConnection);
 
-    res.status(200);
-    res.json(result);
+    // res.status(200);
+    // res.json(result);
   }
 
   /**
