@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import { getAllPlayers, getPlayerById, createPlayer, updatePlayer, deletePlayer } from "../services/player-service";
+import * as playerService from "../services/player-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
 import { Player } from "../interfaces/player";
 
@@ -10,7 +10,7 @@ export class PlayerController {
     next: NextFunction
   ): Promise<void> {
     const dbConnection = await dbPool.getConnection();
-    const result = await getAllPlayers(dbConnection);
+    const result = await playerService.getAllPlayers(dbConnection);
 
     res.status(200);
     res.json(result);
@@ -28,7 +28,7 @@ export class PlayerController {
       return;
     }
     const dbConnection = await dbPool.getConnection();
-    const result = await getPlayerById(playerId, dbConnection);
+    const result = await playerService.getPlayerById(playerId, dbConnection);
 
     res.status(200);
     res.json(result);
@@ -61,7 +61,7 @@ export class PlayerController {
       let result: number;
       // トランザクション
       await transactionHelper(dbConnection, async () => {
-        result = await createPlayer(player, dbConnection);
+        result = await playerService.createPlayer(player, dbConnection);
       });
       res.status(200).json({ id: result! });
     } catch (e) {
@@ -92,7 +92,7 @@ export class PlayerController {
       let result: Player;
       // トランザクション
       await transactionHelper(dbConnection, async () => {
-        result = await updatePlayer(playerId, player, dbConnection);
+        result = await playerService.updatePlayer(playerId, player, dbConnection);
       });
       res.status(200).json(result!);
     } catch (e) {
@@ -112,7 +112,7 @@ export class PlayerController {
       return;
     }
     const dbConnection = await dbPool.getConnection();
-    const result = await deletePlayer(playerId, dbConnection);
+    const result = await playerService.deletePlayer(playerId, dbConnection);
 
     res.status(200);
     res.json(result);
