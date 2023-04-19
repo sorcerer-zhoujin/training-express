@@ -11,9 +11,9 @@ const getAllPlayers = async (dbConnection: PoolConnection): Promise<Player[]> =>
     return {
       id: row.id,
       name: row.name,
-      password: row.password,
       money: row.money,
       hp: row.hp,
+      mp: row.mp
     };
   });
   return result;
@@ -24,8 +24,8 @@ const createPlayer = async (
   dbConnection: PoolConnection
 ): Promise<number> => {
   const [rows] = await dbConnection.query<OkPacket>(
-    "INSERT INTO `players` (`name`, `password`, `money`, `hp`) VALUES (?,?,?,?)",
-    [data.name, data.password, data.money, data.hp]
+    "INSERT INTO `players` (`name`, `money`, `hp`, `mp`) VALUES (?,?,?,?)",
+    [data.name, data.money, data.hp, data.mp]
   );
 
   return rows.insertId;

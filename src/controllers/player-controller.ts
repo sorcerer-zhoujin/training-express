@@ -32,9 +32,9 @@ export class PlayerController {
   ): Promise<void> {
     if (
       !req.body.name ||
-      !req.body.password ||
       !req.body.money ||
-      !req.body.hp
+      !req.body.hp ||
+      !req.body.mp
     ) {
       res.status(400).json({ message: "Invalid parameters or body." });
       return;
@@ -42,9 +42,9 @@ export class PlayerController {
 
     const player: Player = {
       name: req.body.name,
-      password: req.body.password,
       money: req.body.money,
       hp: req.body.hp,
+      mp: req.body.mp
     };
 
     const dbConnection = await dbPool.getConnection();
