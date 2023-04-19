@@ -2,7 +2,6 @@ import { Response, Request, NextFunction } from "express";
 import * as playerService from "../services/player-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
 import { Player } from "../interfaces/player";
-import { NotFoundError } from "../interfaces/my-error";
 
 export class PlayerController {
   async getAllPlayers(
