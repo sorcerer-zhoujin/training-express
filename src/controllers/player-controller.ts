@@ -34,7 +34,7 @@ export class PlayerController {
       const result = await playerService.getPlayerById(playerId, dbConnection);
       res.status(200).json(result);
       return;
-    } catch (e: any) {
+    } catch (e) {
       if (e instanceof NotFoundError) {
         res.status(404).json({message: e.message });
       }
