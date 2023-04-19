@@ -48,4 +48,30 @@ const createPlayer = async (
   return rows.insertId;
 };
 
-export { getAllPlayers, getPlayerById, createPlayer };
+const updatePlayer = async (
+  playerId: number,
+  data: Player,
+  dbConnection: PoolConnection
+  ): Promise<Player> => {
+  const [[row]] = await dbConnection.query<RowDataPacket[]>(
+    "SELECT * FROM `players` WHERE `id` = ?",
+    [playerId]
+  );
+
+  const value: Player = {
+      id: playerId,
+      name: data.name != null ? data.name : row.name,
+      money: data.money != null ? data.money : row.money,
+      hp: data.hp != null ? data.hp : row.hp,
+      mp: data.hp != null ? data.hp : row.hp
+  };
+
+  await dbConnection.query<OkPacket>(
+    "UPDATE `players` SET `name` = ?, `money` = ?, `hp` = ?, `mp` = ? WHERE `id` = ?",
+    [value.name, value.money, value.hp, value.mp, value.id]
+  );
+
+  return value;
+}
+
+export { getAllPlayers, getPlayerById, createPlayer, updatePlayer };

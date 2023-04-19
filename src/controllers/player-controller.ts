@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import { getAllPlayers, getPlayerById, createPlayer } from "../services/player-service";
+import { getAllPlayers, getPlayerById, createPlayer, updatePlayer } from "../services/player-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
 import { Player } from "../interfaces/player";
 
@@ -64,6 +64,37 @@ export class PlayerController {
         result = await createPlayer(player, dbConnection);
       });
       res.status(200).json({ id: result! });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async updatePlayer(
+    req: Request,
+    res: Response,
+    next:NextFunction
+  ): Promise<void> {
+    const playerId: number  = parseInt(req.params.playerId, 10);
+    if (isNaN(playerId) || !req.body || Object.keys(req.body).length === 0) {
+      res.status(400).json({ message: "Invalid parameters or body." });
+      return;
+    }
+
+    const player: Player = {
+      name: req.body.name,
+      money: req.body.money,
+      hp: req.body.hp,
+      mp: req.body.mp
+    };
+
+    const dbConnection = await dbPool.getConnection();
+    try {
+      let result: Player;
+      // トランザクション
+      await transactionHelper(dbConnection, async () => {
+        result = await updatePlayer(playerId, player, dbConnection);
+      });
+      res.status(200).json(result!);
     } catch (e) {
       next(e);
     }

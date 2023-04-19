@@ -20,4 +20,13 @@ const createPlayer = async (
   return result;
 };
 
-export { getAllPlayers, getPlayerById, createPlayer };
+const updatePlayer = async (
+  playerId: number,
+  data: Player,
+  dbConnection: PoolConnection
+): Promise<Player> => {
+  const result: Player = await playerModel.updatePlayer(playerId, data, dbConnection);
+  return result;
+}
+
+export { getAllPlayers, getPlayerById, createPlayer, updatePlayer };
