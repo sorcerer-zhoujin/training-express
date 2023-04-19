@@ -2,6 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import * as playerService from "../services/player-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
 import { Player } from "../interfaces/player";
+import { NotFoundError } from "../interfaces/my-error";
 
 export class PlayerController {
   async getAllPlayers(
@@ -32,9 +33,12 @@ export class PlayerController {
     try {
       const result = await playerService.getPlayerById(playerId, dbConnection);
       res.status(200).json(result);
+      return;
     } catch (e: any) {
-      console.error(e.message);
-      res.status(404).json({message: e.message });
+      if (e instanceof NotFoundError) {
+        res.status(404).json({message: e.message });
+      }
+      return;
     }
   }
 
