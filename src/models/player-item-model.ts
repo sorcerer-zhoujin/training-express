@@ -69,18 +69,11 @@ const doDataCheck = async (
   data: PlayerItem,
   dbConnection: PoolConnection
 ): Promise<boolean> => {
-
-  const [[player]] = await dbConnection.query<RowDataPacket[]>(
-    "SELECT * FROM `players` WHERE `id` = ?",
-    [data.player_id]
+  const [[row]] = await dbConnection.query<RowDataPacket[]>(
+    "SELECT * FROM `players` JOIN `items` ON `players`.`id` = ? AND `items`.`id` = ?",
+    [data.player_id, data.item_id]
   );
-  if (!player) return false;
-
-  const [[item]] = await dbConnection.query<RowDataPacket[]>(
-    "SELECT * FROM `items` WHERE `id` = ?",
-    [data.item_id]
-  );
-  if (!item) return false;
+  if (!row) return false;
 
   return true;
 }
