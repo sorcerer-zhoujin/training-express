@@ -27,7 +27,6 @@ const insertItem = async (
     throw new NotFoundError("Player or item data not found.");
   }
 
-  console.log("Inserting data...");
   const [rows] = await dbConnection.query<RowDataPacket[]>(
     "INSERT INTO `player_items` (`player_id`, `item_id`, `count`) VALUES (?,?,?)",
     [data.player_id, data.item_id, data.count]
@@ -50,7 +49,6 @@ const updateItem = async (
     throw new NotFoundError("Player or item data not found.");
   }
 
-  console.log("Updating data...");
   const [rows] = await dbConnection.query<RowDataPacket[]>(
     "UPDATE `player_items` SET `count` = ? WHERE `player_id` = ? AND `item_id` = ?",
     [data.count, data.player_id, data.item_id]

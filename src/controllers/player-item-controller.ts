@@ -73,7 +73,6 @@ export class PlayerItemController {
       if (e instanceof NotFoundError) {
         res.status(404).json({message: e.message });
       }
-      console.log(e);
       next(e);
     }
   }
