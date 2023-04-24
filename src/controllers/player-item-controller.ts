@@ -24,7 +24,6 @@ export class PlayerItemController {
       if (e instanceof NotFoundError) {
         res.status(404).json({message: e.message });
       }
-      next(e);
     }
   }
 
@@ -44,10 +43,6 @@ export class PlayerItemController {
     const dbConnection = await dbPool.getConnection();
 
     try {
-      const _data = await playerItemService.getItems(pid, dbConnection);
-      //const hasItem = _data.some((i) => i.item_id === req.body.itemId);
-      const item = _data.find(item => item.itemId === req.body.itemId);
-
       let data: PlayerItem = {
         player_id: pid,
         item_id: req.body.itemId,
@@ -55,25 +50,15 @@ export class PlayerItemController {
       };
       let result: PlayerItemJson;
 
-      if (item) {
-        // 加算
-        data.count! += item.count!;
-        // トランザクション
-        await transactionHelper(dbConnection, async () => {
-          result = await playerItemService.updateItem(data, dbConnection);
-        });
-      } else {
-        // トランザクション
-        await transactionHelper(dbConnection, async () => {
-          result = await playerItemService.insertItem(data, dbConnection);
-        });
-      }
+      // トランザクション
+      await transactionHelper(dbConnection, async () => {
+        result = await playerItemService.addItem(data, dbConnection);
+      });
       res.status(200).json(result!);
     } catch (e) {
       if (e instanceof NotFoundError) {
         res.status(404).json({message: e.message });
       }
-      next(e);
     }
   }
 

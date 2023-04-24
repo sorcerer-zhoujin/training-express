@@ -22,11 +22,6 @@ const insertItem = async (
   data: PlayerItem,
   dbConnection: PoolConnection
 ): Promise<PlayerItemJson> => {
-  // データをチェック
-  if (!(await doDataCheck(data, dbConnection))) {
-    throw new NotFoundError("Player or item data not found.");
-  }
-
   const [rows] = await dbConnection.query<RowDataPacket[]>(
     "INSERT INTO `player_items` (`player_id`, `item_id`, `count`) VALUES (?,?,?)",
     [data.player_id, data.item_id, data.count]
@@ -44,11 +39,6 @@ const updateItem = async (
   data: PlayerItem,
   dbConnection: PoolConnection
 ): Promise<PlayerItemJson> => {
-  // データをチェック
-  if (!(await doDataCheck(data, dbConnection))) {
-    throw new NotFoundError("Player or item data not found.");
-  }
-
   const [rows] = await dbConnection.query<RowDataPacket[]>(
     "UPDATE `player_items` SET `count` = ? WHERE `player_id` = ? AND `item_id` = ?",
     [data.count, data.player_id, data.item_id]
@@ -66,15 +56,13 @@ const updateItem = async (
 const doDataCheck = async (
   data: PlayerItem,
   dbConnection: PoolConnection
-): Promise<boolean> => {
+): Promise<void> => {
   const [[row]] = await dbConnection.query<RowDataPacket[]>(
     "SELECT * FROM `players` JOIN `items` ON `players`.`id` = ? AND `items`.`id` = ?",
     [data.player_id, data.item_id]
   );
-  if (!row) return false;
-
-  return true;
+  if (!row) throw new NotFoundError("Player or item data not found.");
 }
 
 
-export { getItems, insertItem, updateItem }
+export { getItems, insertItem, updateItem, doDataCheck }

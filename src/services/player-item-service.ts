@@ -7,21 +7,28 @@ const getItems = async (playerId: number, dbConnection: PoolConnection): Promise
   return result;
 }
 
-
-const insertItem = async (
+const addItem = async (
   data: PlayerItem,
   dbConnection: PoolConnection
 ): Promise<PlayerItemJson> => {
-  const result: PlayerItemJson = await playerItemModel.insertItem(data, dbConnection);
+  // データをチェック
+  await playerItemModel.doDataCheck(data, dbConnection);
+
+  const _items = await getItems(data.player_id!, dbConnection);
+  const item = _items.find(item => item.itemId === data.item_id);
+  let result: PlayerItemJson;
+  if (item) {
+    // 加算
+    data.count! += item.count!;
+    // アップデート
+    result = await playerItemModel.updateItem(data, dbConnection);
+  }
+  else {
+    // インサート
+    result = await playerItemModel.insertItem(data, dbConnection);
+  }
+
   return result;
 }
 
-const updateItem = async (
-  data: PlayerItem,
-  dbConnection: PoolConnection
-): Promise<PlayerItemJson> => {
-  const result: PlayerItemJson = await playerItemModel.updateItem(data, dbConnection);
-  return result;
-}
-
-export { getItems, insertItem, updateItem }
+export { getItems, addItem }
