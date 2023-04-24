@@ -7,6 +7,11 @@ const getItems = async (playerId: number, dbConnection: PoolConnection): Promise
   return result;
 }
 
+const getItem = async (playerId: number, itemId: number, dbConnection: PoolConnection): Promise<PlayerItemJson> => {
+  const result = await playerItemModel.getItem(playerId, itemId, dbConnection)
+  return result;
+}
+
 const addItem = async (
   data: PlayerItem,
   dbConnection: PoolConnection
@@ -14,8 +19,9 @@ const addItem = async (
   // データをチェック
   await playerItemModel.doDataCheck(data, dbConnection);
 
-  const _items = await getItems(data.player_id!, dbConnection);
-  const item = _items.find(item => item.itemId === data.item_id);
+  //const _items = await getItems(data.player_id!, dbConnection);
+  //const item = _items.find(item => item.itemId === data.item_id);
+  const item = await getItem(data.player_id!, data.item_id!, dbConnection);
   let result: PlayerItemJson;
   if (item) {
     // 加算

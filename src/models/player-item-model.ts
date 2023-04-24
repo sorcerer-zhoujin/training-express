@@ -3,10 +3,10 @@ import { PlayerItem, PlayerItemJson } from "../interfaces/player-item";
 import { RowDataPacket, OkPacket } from "mysql2";
 import { NotFoundError } from "../interfaces/my-error";
 
-const getItems = async (pid: number, dbConnection: PoolConnection): Promise<PlayerItemJson[]> => {
+const getItems = async (playerId: number, dbConnection: PoolConnection): Promise<PlayerItemJson[]> => {
   const [rows] = await dbConnection.query<RowDataPacket[]>(
     "SELECT * FROM `player_items` WHERE `player_id` = ?",
-    [pid]
+    [playerId]
   );
 
   const result: PlayerItemJson[] = rows.map((row) => {
@@ -15,6 +15,18 @@ const getItems = async (pid: number, dbConnection: PoolConnection): Promise<Play
       count: row.count
     };
   });
+  return result;
+}
+
+const getItem = async (playerId: number, itemId: number, dbConnection: PoolConnection): Promise<PlayerItemJson> => {
+  const [[row]] = await dbConnection.query<RowDataPacket[]>(
+    "SELECT * FROM `player_items` WHERE `player_id` = ? AND `item_id` = ?",
+    [playerId, itemId]
+  );
+  const result: PlayerItemJson = {
+    itemId: row.item_id,
+    count: row.count
+  };
   return result;
 }
 
@@ -65,4 +77,4 @@ const doDataCheck = async (
 }
 
 
-export { getItems, insertItem, updateItem, doDataCheck }
+export { getItems, getItem, insertItem, updateItem, doDataCheck }
