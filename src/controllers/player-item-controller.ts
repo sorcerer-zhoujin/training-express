@@ -24,6 +24,7 @@ export class PlayerItemController {
       if (e instanceof NotFoundError) {
         res.status(404).json({message: e.message });
       }
+      next(e);
     }
   }
 
@@ -58,6 +59,7 @@ export class PlayerItemController {
       if (e instanceof NotFoundError) {
         res.status(404).json({message: e.message });
       }
+      next(e);
     }
   }
 
