@@ -33,8 +33,8 @@ export class PlayerItemController {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const pid: number  = parseInt(req.params.playerId, 10);
-    if (isNaN(pid) ||
+    const playerId: number  = parseInt(req.params.playerId, 10);
+    if (isNaN(playerId) ||
         !req.body.itemId ||
         !req.body.count
     ) {
@@ -45,8 +45,8 @@ export class PlayerItemController {
 
     try {
       const data: PlayerItem = {
-        player_id: pid,
-        item_id: req.body.itemId,
+        playerId: playerId,
+        itemId: req.body.itemId,
         count: req.body.count
       };
       let result: PlayerItemJson;

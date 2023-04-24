@@ -21,7 +21,7 @@ const addItem = async (
 
   //const _items = await getItems(data.player_id!, dbConnection);
   //const item = _items.find(item => item.itemId === data.item_id);
-  const item = await getItem(data.player_id!, data.item_id!, dbConnection);
+  const item = await getItem(data.playerId!, data.itemId!, dbConnection);
   let result: PlayerItemJson;
   if (item) {
     // 加算
