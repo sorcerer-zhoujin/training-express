@@ -7,7 +7,7 @@ const getAllItems = async (playerId: number, dbConnection: PoolConnection): Prom
   return result;
 }
 
-const getItem = async (playerId: number, itemId: number, dbConnection: PoolConnection): Promise<PlayerItemJson> => {
+const getItem = async (playerId: number, itemId: number, dbConnection: PoolConnection): Promise<PlayerItemJson | null> => {
   const result = await playerItemModel.getItem(playerId, itemId, dbConnection)
   return result;
 }

@@ -18,11 +18,12 @@ const getItems = async (playerId: number, dbConnection: PoolConnection): Promise
   return result;
 }
 
-const getItem = async (playerId: number, itemId: number, dbConnection: PoolConnection): Promise<PlayerItemJson> => {
+const getItem = async (playerId: number, itemId: number, dbConnection: PoolConnection): Promise<PlayerItemJson | null> => {
   const [[row]] = await dbConnection.query<RowDataPacket[]>(
     "SELECT * FROM `player_items` WHERE `player_id` = ? AND `item_id` = ?",
     [playerId, itemId]
   );
+  if (!row) return null;
   const result: PlayerItemJson = {
     itemId: row.item_id,
     count: row.count
