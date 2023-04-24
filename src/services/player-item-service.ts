@@ -2,7 +2,7 @@ import * as playerItemModel from "../models/player-item-model";
 import { PlayerItem, PlayerItemJson } from "../interfaces/player-item";
 import { PoolConnection } from "mysql2/promise";
 
-const getItems = async (playerId: number, dbConnection: PoolConnection): Promise<PlayerItemJson[]> => {
+const getAllItems = async (playerId: number, dbConnection: PoolConnection): Promise<PlayerItemJson[]> => {
   const result = await playerItemModel.getItems(playerId, dbConnection);
   return result;
 }
@@ -37,4 +37,4 @@ const addItem = async (
   return result;
 }
 
-export { getItems, addItem }
+export { getAllItems, addItem }

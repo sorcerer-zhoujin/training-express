@@ -5,7 +5,7 @@ import { PlayerItem, PlayerItemJson } from "../interfaces/player-item";
 import { NotFoundError } from "../interfaces/my-error";
 
 export class PlayerItemController {
-  async getItems(
+  async getAllItems(
     req: Request,
     res: Response,
     next: NextFunction
@@ -18,7 +18,7 @@ export class PlayerItemController {
     const dbConnection = await dbPool.getConnection();
 
     try {
-      const result = await playerItemService.getItems(pid, dbConnection);
+      const result = await playerItemService.getAllItems(pid, dbConnection);
       res.status(200).json(result);
     } catch (e) {
       if (e instanceof NotFoundError) {
