@@ -43,13 +43,12 @@ export class PlayerItemController {
     const dbConnection = await dbPool.getConnection();
 
     try {
-      let data: PlayerItem = {
+      const data: PlayerItem = {
         player_id: pid,
         item_id: req.body.itemId,
         count: req.body.count
       };
       let result: PlayerItemJson;
-
       // トランザクション
       await transactionHelper(dbConnection, async () => {
         result = await playerItemService.addItem(data, dbConnection);
