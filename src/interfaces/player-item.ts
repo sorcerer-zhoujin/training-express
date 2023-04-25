@@ -6,14 +6,9 @@ interface PlayerItem {
   count?: number;
 }
 
-interface PlayerItemJson {
-  itemId?: number;
-  count?: number;
-}
-
 interface PlayerAndItem {
   player: Player;
   playerItem: PlayerItem;
 }
 
-export { PlayerItem, PlayerItemJson, PlayerAndItem };
+export { PlayerItem, PlayerAndItem };

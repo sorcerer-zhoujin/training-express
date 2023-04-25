@@ -1,6 +1,6 @@
 import * as playerItemModel from "../models/player-item-model";
 import * as playerModel from "../models/player-model";
-import { PlayerAndItem, PlayerItem, PlayerItemJson } from "../interfaces/player-item";
+import { PlayerAndItem, PlayerItem } from "../interfaces/player-item";
 import { PoolConnection } from "mysql2/promise";
 import { getPlayerById } from "./player-service";
 import { LimitExceededError, NotEnoughError } from "../interfaces/my-error";
@@ -18,14 +18,12 @@ const getItem = async (playerId: number, itemId: number, dbConnection: PoolConne
 const addItem = async (
   data: PlayerItem,
   dbConnection: PoolConnection
-): Promise<PlayerItemJson> => {
+): Promise<PlayerItem> => {
   // データをチェック
   await playerItemModel.doDataCheck(data, dbConnection);
 
-  //const _items = await getItems(data.player_id!, dbConnection);
-  //const item = _items.find(item => item.itemId === data.item_id);
   const item = await getItem(data.playerId!, data.itemId!, dbConnection);
-  let result: PlayerItemJson;
+  let result: PlayerItem;
   if (item) {
     // 加算
     data.count! += item.count!;
