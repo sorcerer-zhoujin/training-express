@@ -1,3 +1,5 @@
+import { Player } from "./player";
+
 interface PlayerItem {
   playerId?: number;
   itemId?: number;
@@ -9,4 +11,9 @@ interface PlayerItemJson {
   count?: number;
 }
 
-export { PlayerItem, PlayerItemJson };
+interface PlayerAndItem {
+  player: Player;
+  playerItem: PlayerItem;
+}
+
+export { PlayerItem, PlayerItemJson, PlayerAndItem };

@@ -16,3 +16,4 @@ router.delete("/:playerId", playerController.deletePlayer);
 //player_items
 router.get("/:playerId/getAllItems", playerItemController.getAllItems);
 router.post("/:playerId/addItem", playerItemController.addItem);
+router.post("/:playerId/useItem", playerItemController.useItem);

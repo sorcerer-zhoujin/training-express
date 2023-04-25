@@ -2,6 +2,7 @@ import { PoolConnection } from "mysql2/promise";
 import { PlayerItem, PlayerItemJson } from "../interfaces/player-item";
 import { RowDataPacket, OkPacket } from "mysql2";
 import { NotFoundError } from "../interfaces/my-error";
+import { Item } from "../interfaces/item";
 
 const getItems = async (playerId: number, dbConnection: PoolConnection): Promise<PlayerItemJson[]> => {
   const [rows] = await dbConnection.query<RowDataPacket[]>(
@@ -18,12 +19,14 @@ const getItems = async (playerId: number, dbConnection: PoolConnection): Promise
   return result;
 }
 
-const getItem = async (playerId: number, itemId: number, dbConnection: PoolConnection): Promise<PlayerItemJson> => {
+const getItem = async (playerId: number, itemId: number, dbConnection: PoolConnection): Promise<PlayerItem | null> => {
   const [[row]] = await dbConnection.query<RowDataPacket[]>(
     "SELECT * FROM `player_items` WHERE `player_id` = ? AND `item_id` = ?",
     [playerId, itemId]
   );
-  const result: PlayerItemJson = {
+  if (!row) return null;
+  const result: PlayerItem = {
+    playerId: row.player_id,
     itemId: row.item_id,
     count: row.count
   };
@@ -76,5 +79,25 @@ const doDataCheck = async (
   if (!row) throw new NotFoundError("Player or item data not found.");
 }
 
+// データベースからアイテム情報を取得
+const getItemData = async (
+  id: number,
+  dbConnection: PoolConnection
+): Promise<Item> => {
+  const [[row]] = await dbConnection.query<RowDataPacket[]>(
+    "SELECT * FROM `items` WHERE `id` = ?",
+    [id]
+  );
+  if (!row) throw new NotFoundError("Player or item data not found.");
 
-export { getItems, getItem, insertItem, updateItem, doDataCheck }
+  const item: Item = {
+    id: row.id,
+    name: row.name,
+    heal: row.heal,
+    price: row.price
+  };
+
+  return item;
+}
+
+export { getItems, getItem, insertItem, updateItem, doDataCheck, getItemData }

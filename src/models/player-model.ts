@@ -69,7 +69,7 @@ const updatePlayer = async (
       name: data.name != null ? data.name : row.name,
       money: data.money != null ? data.money : row.money,
       hp: data.hp != null ? data.hp : row.hp,
-      mp: data.hp != null ? data.hp : row.hp
+      mp: data.mp != null ? data.mp : row.mp
   };
 
   await dbConnection.query<OkPacket>(
