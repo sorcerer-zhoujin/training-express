@@ -41,21 +41,21 @@ const addItem = async (
 }
 
 const useItem = async (
-  req: PlayerItem,
+  data: PlayerItem,
   dbConnection: PoolConnection
 ): Promise<PlayerAndItem> => {
   // データをチェック
-  await playerItemModel.doDataCheck(req, dbConnection);
+  await playerItemModel.doDataCheck(data, dbConnection);
 
   const MAX_HP = 200,
         MAX_MP = 200;
 
-  let player = await getPlayerById(req.playerId!, dbConnection);
-  let item = (await getItem(req.playerId!, req.itemId!, dbConnection))!;
-  const itemValue = (await playerItemModel.getItemData(req.itemId!, dbConnection)).heal;
+  let player = await getPlayerById(data.playerId!, dbConnection);
+  let item = (await getItem(data.playerId!, data.itemId!, dbConnection))!;
+  const itemValue = (await playerItemModel.getItemData(data.itemId!, dbConnection)).heal;
 
   // アイテム不足
-  if (item.count! < req.count!) {
+  if (item.count! < data.count!) {
     throw new NotEnoughError("The player doesn't have enough items.");
   }
 
@@ -66,7 +66,7 @@ const useItem = async (
 
   // HP+
   if (item.itemId === 1) {
-    for (let i = req.count!; i > 0; i--) {
+    for (let i = data.count!; i > 0; i--) {
       player.hp = (player.hp! + itemValue!) < MAX_HP ? (player.hp! + itemValue!) : MAX_HP;
       item.count!--;
       if (player!.hp! >= MAX_HP) break;
@@ -74,7 +74,7 @@ const useItem = async (
   }
   // MP+
   if (item.itemId === 2) {
-    for (let i = req.count!; i > 0; i--) {
+    for (let i = data.count!; i > 0; i--) {
       player.mp = (player.mp! + itemValue!) < MAX_MP ? (player.mp! + itemValue!) : MAX_MP;
       item.count!--;
       if (player.mp! >= MAX_MP) break;
