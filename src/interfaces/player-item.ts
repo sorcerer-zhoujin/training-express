@@ -16,4 +16,4 @@ interface PlayerAndItem {
   playerItem: PlayerItem;
 }
 
-export { PlayerItem, PlayerItemJson };
+export { PlayerItem, PlayerItemJson, PlayerAndItem };
