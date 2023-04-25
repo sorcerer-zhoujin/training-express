@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import * as playerItemService from "../services/player-item-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
-import { PlayerItem, PlayerItemJson, PlayerAndItem } from "../interfaces/player-item";
+import { PlayerItem, PlayerAndItem } from "../interfaces/player-item";
 import { LimitExceededError, NotEnoughError, NotFoundError } from "../interfaces/my-error";
 
 export class PlayerItemController {
@@ -49,7 +49,7 @@ export class PlayerItemController {
         itemId: req.body.itemId,
         count: req.body.count
       };
-      let result: PlayerItemJson;
+      let result: PlayerItem;
       // トランザクション
       await transactionHelper(dbConnection, async () => {
         result = await playerItemService.addItem(data, dbConnection);

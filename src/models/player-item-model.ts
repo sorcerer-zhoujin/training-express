@@ -1,16 +1,16 @@
 import { PoolConnection } from "mysql2/promise";
-import { PlayerItem, PlayerItemJson } from "../interfaces/player-item";
+import { PlayerItem } from "../interfaces/player-item";
 import { RowDataPacket, OkPacket } from "mysql2";
 import { NotFoundError } from "../interfaces/my-error";
 import { Item } from "../interfaces/item";
 
-const getItems = async (playerId: number, dbConnection: PoolConnection): Promise<PlayerItemJson[]> => {
+const getItems = async (playerId: number, dbConnection: PoolConnection): Promise<PlayerItem[]> => {
   const [rows] = await dbConnection.query<RowDataPacket[]>(
     "SELECT * FROM `player_items` WHERE `player_id` = ?",
     [playerId]
   );
 
-  const result: PlayerItemJson[] = rows.map((row) => {
+  const result: PlayerItem[] = rows.map((row) => {
     return {
       itemId: row.item_id,
       count: row.count
@@ -36,13 +36,13 @@ const getItem = async (playerId: number, itemId: number, dbConnection: PoolConne
 const insertItem = async (
   data: PlayerItem,
   dbConnection: PoolConnection
-): Promise<PlayerItemJson> => {
+): Promise<PlayerItem> => {
   const [rows] = await dbConnection.query<RowDataPacket[]>(
     "INSERT INTO `player_items` (`player_id`, `item_id`, `count`) VALUES (?,?,?)",
     [data.playerId, data.itemId, data.count]
   );
 
-  const result: PlayerItemJson = {
+  const result: PlayerItem = {
     itemId: data.itemId,
     count: data.count
   }
@@ -53,13 +53,13 @@ const insertItem = async (
 const updateItem = async (
   data: PlayerItem,
   dbConnection: PoolConnection
-): Promise<PlayerItemJson> => {
+): Promise<PlayerItem> => {
   const [rows] = await dbConnection.query<RowDataPacket[]>(
     "UPDATE `player_items` SET `count` = ? WHERE `player_id` = ? AND `item_id` = ?",
     [data.count, data.playerId, data.itemId]
   );
 
-  const result: PlayerItemJson = {
+  const result: PlayerItem = {
     itemId: data.itemId,
     count: data.count
   }

@@ -27,7 +27,6 @@ const getPlayerById = async (playerId: number, dbConnection: PoolConnection): Pr
   );
 
   if (!row) {
-    console.log(row);
     throw new NotFoundError("Player not found.");
   }
 
@@ -38,7 +37,6 @@ const getPlayerById = async (playerId: number, dbConnection: PoolConnection): Pr
     hp: row.hp,
     mp: row.mp
   };
-  console.log(result);
   return result;
 }
 
