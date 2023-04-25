@@ -1,8 +1,8 @@
 import { Response, Request, NextFunction } from "express";
 import * as playerItemService from "../services/player-item-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
-import { PlayerItem, PlayerItemJson } from "../interfaces/player-item";
-import { NotFoundError } from "../interfaces/my-error";
+import { PlayerItem, PlayerItemJson, PlayerAndItem } from "../interfaces/player-item";
+import { LimitExceededError, NotEnoughError, NotFoundError } from "../interfaces/my-error";
 
 export class PlayerItemController {
   async getAllItems(
@@ -58,6 +58,53 @@ export class PlayerItemController {
     } catch (e) {
       if (e instanceof NotFoundError) {
         res.status(404).json({message: e.message });
+      }
+      next(e);
+    }
+  }
+
+  async useItem(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const playerId: number = parseInt(req.params.playerId, 10);
+    if (isNaN(playerId) ||
+        !req.body.itemId
+    ) {
+      res.status(400).json({ message: "Invalid parameters or body." });
+    }
+
+    const dbConnection = await dbPool.getConnection();
+
+    try {
+      let _result: PlayerAndItem;
+      const data: PlayerItem = {
+        playerId: playerId,
+        itemId: req.body.itemId,
+        count: req.body.count ? req.body.count : 1
+      }
+      // トランザクション
+      await transactionHelper(dbConnection, async () => {
+        _result = await playerItemService.useItem(data, dbConnection);
+      });
+      const result = {
+        itemId: _result!.playerItem.itemId,
+        count: _result!.playerItem.count,
+        player: {
+          id: _result!.player.id,
+          hp: _result!.player.hp,
+          mp: _result!.player.mp
+        }
+      };
+      res.status(200).json(result);
+    } catch (e) {
+      if (e instanceof NotFoundError) {
+        res.status(404).json({message: e.message });
+      }
+      if (e instanceof NotEnoughError ||
+          e instanceof LimitExceededError) {
+        res.status(400).json({message: e.message });
       }
       next(e);
     }
