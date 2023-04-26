@@ -130,7 +130,6 @@ export class PlayerItemController {
       const gachaResults: PlayerItem[] = await playerItemService.useGacha(playerId, gachaCount, dbConnection);
       const player = await playerService.getPlayerById(playerId, dbConnection);
       const playerItems = await playerItemService.getAllItems(playerId, dbConnection);
-      //console.log(gachaResult);
       const result = {
         results: gachaResults,
         player: {
