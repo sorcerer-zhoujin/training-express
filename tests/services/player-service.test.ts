@@ -31,10 +31,12 @@ test("get all players", async () => {
 
 test("get player by id", async () => {
   jest.spyOn(playerModel, "getPlayerById")
-      .mockResolvedValueOnce(mockDataPlayer1);
+      .mockResolvedValueOnce(mockDataPlayer1)
+      .mockResolvedValueOnce(mockDataPlayer2);
 
     let id: any, conn: any;
     expect(await getPlayerById(id, conn)).toEqual(mockDataPlayer1);
+    expect(await getPlayerById(id, conn)).toEqual(mockDataPlayer2);
 });
 
 test("create player", async () => {
