@@ -75,9 +75,9 @@ test("delete player", async () => {
   const random = Math.floor(Math.random() * 1000) + 1;
 
   jest.spyOn(playerModel, "deletePlayer")
-  .mockResolvedValueOnce(id1)
-  .mockResolvedValueOnce(id2)
-  .mockResolvedValueOnce(random);
+      .mockResolvedValueOnce(id1)
+      .mockResolvedValueOnce(id2)
+      .mockResolvedValueOnce(random);
 
   let id: any, conn:any;
   expect(await deletePlayer(id, conn)).toBe(id1);
