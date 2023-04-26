@@ -68,11 +68,17 @@ test("update player", async () => {
 })
 
 test("delete player", async () => {
+  const id1 = mockDataPlayer1.id!;
+  const id2 = mockDataPlayer2.id!;
   const random = Math.floor(Math.random() * 1000) + 1;
 
   jest.spyOn(playerModel, "deletePlayer")
+  .mockResolvedValueOnce(id1)
+  .mockResolvedValueOnce(id2)
   .mockResolvedValueOnce(random);
 
   let id: any, conn:any;
+  expect(await deletePlayer(id, conn)).toBe(id1);
+  expect(await deletePlayer(id, conn)).toBe(id2);
   expect(await deletePlayer(id, conn)).toBe(random);
 });
