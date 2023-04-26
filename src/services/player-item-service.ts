@@ -1,6 +1,9 @@
+import * as itemModel from "../models/item-model";
 import * as playerItemModel from "../models/player-item-model";
 import * as playerModel from "../models/player-model";
 import { PlayerAndItem, PlayerItem } from "../interfaces/player-item";
+import { Item } from "../interfaces/item";
+import { Player } from "../interfaces/player";
 import { PoolConnection } from "mysql2/promise";
 import { getPlayerById } from "./player-service";
 import { LimitExceededError, NotEnoughError } from "../interfaces/my-error";
@@ -90,4 +93,92 @@ const useItem = async (
   return result;
 }
 
-export { getAllItems, addItem, useItem }
+const useGacha = async (
+  playerId: number,
+  count: number,
+  dbConnection: PoolConnection
+): Promise<PlayerItem[]> => {
+  const COST = 10;
+  const totalCost = COST * count;
+  // プレイヤーデータ
+  let player: Player = await getPlayerById(playerId, dbConnection);
+  let playerItems: PlayerItem[] = await playerItemModel.getItems(playerId, dbConnection);
+  if (player.money! < totalCost) {
+    throw new NotEnoughError("The player doesn't have enough money.")
+  } else {
+    player.money! -= totalCost;
+  }
+
+  // アイテム情報
+  const itemPool: Item[] = await itemModel.getAllItems(dbConnection);
+  let lootPercent: number[] = [0];
+  itemPool.forEach(item => {
+    lootPercent[item.id!] = item.percent!;
+  });
+
+  const resultIds: number[] = lottery(lootPercent, count);
+  let itemCounter: number[] = new Array(itemPool.length + 1).fill(0);
+  // ガチャ結果アイテムの個数を計算
+  resultIds.forEach(id => { itemCounter[id]++; });
+
+  // 戻り値配列・PlayerItem[]
+  const results: PlayerItem[] = [];
+
+  for (const item of itemPool) {
+    // 戻り値配列・PlayerItem[]
+    results.push({
+        itemId: item.id,
+        count: itemCounter[item.id!]
+      });
+    // プレイヤーアイテム存在チェック
+    const hasItem: boolean = playerItems.find(i => i.itemId === item.id) ? true : false;
+    if (hasItem) {
+      const newCount: number = itemCounter[item.id!] + playerItems.find(i => i.itemId === item.id)!.count!;
+      const newData: PlayerItem = {
+        playerId: playerId,
+        itemId: item.id,
+        count: newCount
+      }
+      await playerItemModel.updateItem(newData, dbConnection);
+    } else {
+      const newCount: number = itemCounter[item.id!];
+      const newData: PlayerItem = {
+        playerId: playerId,
+        itemId: item.id,
+        count: newCount
+      }
+      await playerItemModel.insertItem(newData, dbConnection);
+    }
+  }
+  await playerModel.updatePlayer(playerId, player, dbConnection);
+
+  return results;
+}
+
+const lottery = (percent: number[], times: number) => {
+  const MAX_PERCENT = 100;
+  let totalPercent = percent.reduce((total, num) => total + num);
+
+  if (totalPercent < MAX_PERCENT) {
+    percent[0] = MAX_PERCENT - totalPercent;
+    totalPercent = MAX_PERCENT;
+  }
+
+  const result: number[] = [];
+
+  for (let i = 0; i < times; i++) {
+    const random = Math.floor(Math.random() * MAX_PERCENT) + 1;
+    let currentPercent = 0;
+
+    percent.some((per, id) => {
+      currentPercent += per;
+      if (currentPercent >= random) {
+        result.push(id);
+        return true;
+      }
+    });
+  }
+  return result;
+}
+
+export { getAllItems, addItem, useItem, useGacha }

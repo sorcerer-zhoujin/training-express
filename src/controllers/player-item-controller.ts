@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import * as playerItemService from "../services/player-item-service";
+import * as playerService from "../services/player-service";
 import { dbPool, transactionHelper } from "../helpers/db-helper";
 import { PlayerItem, PlayerAndItem } from "../interfaces/player-item";
 import { LimitExceededError, NotEnoughError, NotFoundError } from "../interfaces/my-error";
@@ -95,6 +96,45 @@ export class PlayerItemController {
           id: _result!.player.id,
           hp: _result!.player.hp,
           mp: _result!.player.mp
+        }
+      };
+      res.status(200).json(result);
+    } catch (e) {
+      if (e instanceof NotFoundError) {
+        res.status(404).json({message: e.message });
+      }
+      if (e instanceof NotEnoughError ||
+          e instanceof LimitExceededError) {
+        res.status(400).json({message: e.message });
+      }
+      next(e);
+    }
+  }
+
+  async useGacha(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const playerId: number = parseInt(req.params.playerId, 10);
+    const gachaCount: number = parseInt(req.body.count, 10);
+    if (isNaN(playerId) ||
+        isNaN(gachaCount)
+    ) {
+      res.status(400).json({ message: "Invalid parameters or body." });
+    }
+
+    const dbConnection = await dbPool.getConnection();
+
+    try {
+      const gachaResults: PlayerItem[] = await playerItemService.useGacha(playerId, gachaCount, dbConnection);
+      const player = await playerService.getPlayerById(playerId, dbConnection);
+      const playerItems = await playerItemService.getAllItems(playerId, dbConnection);
+      const result = {
+        results: gachaResults,
+        player: {
+          money: player.money,
+          items: playerItems
         }
       };
       res.status(200).json(result);
