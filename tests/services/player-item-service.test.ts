@@ -39,19 +39,19 @@ describe("add item tests", () => {
     itemId: 1,
     count: 10
   };
-  // 乱数を生成
-  const randomCount1 = Math.floor(Math.random() * 100) + 1;
-  const randomCount2 = Math.floor(Math.random() * 100) + 1;
+  // リクエストのアイテム個数
+  const reqCount1 = 1;
+  const reqCount2 = 100;
 
   test("update", async () => {
     const mockItemReq: PlayerItem = {
       playerId: mockPlayerItem.playerId,
       itemId: mockPlayerItem.itemId,
-      count: randomCount1
+      count: reqCount1
     }
     const mockItemRes: PlayerItem = {
       itemId: mockPlayerItem.itemId,
-      count: mockPlayerItem.count! + randomCount1
+      count: mockPlayerItem.count! + reqCount1
     };
     // データをチェックのモック関数
     jest.spyOn(playerItemModel, "doDataCheck")
@@ -71,11 +71,11 @@ describe("add item tests", () => {
     const mockReq: PlayerItem = {
       playerId: 2,
       itemId: 1,
-      count: randomCount2
+      count: reqCount2
     }
     const mockRes: PlayerItem = {
       itemId: mockReq.itemId,
-      count: randomCount2
+      count: reqCount2
     };
     // データをチェックのモック関数
     jest.spyOn(playerItemModel, "doDataCheck")
