@@ -13,13 +13,13 @@ const lottery = (percent: number[], times: number) => {
     const random = Math.floor(Math.random() * MAX_PERCENT) + 1;
     let currentPercent = 0;
 
-    percent.some((per, id) => {
+    for (const [id, per] of percent.entries()) {
       currentPercent += per;
       if (currentPercent >= random) {
         result.push(id);
-        return true;
+        break;
       }
-    });
+    }
   }
   return result;
 }
