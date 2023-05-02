@@ -243,7 +243,7 @@ describe("gacha tests", () => {
 
     // 抽選ロジックのモック関数
     const lotterySpy = jest.spyOn(lotteryHelper, "lottery").mockReset()
-      .mockResolvedValue([ 0, 1, 2, 2, 1, 1, 2, 0, 0 ,2]);
+      .mockReturnValue([ 0, 1, 2, 2, 1, 1, 2, 0, 0 ,2]);
 
     let pid: any, cnt: any, conn: any;
     const result = await useGacha(pid, cnt, conn);

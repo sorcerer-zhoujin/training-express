@@ -117,7 +117,7 @@ const useGacha = async (
     lootPercent[item.id!] = item.percent!;
   });
 
-  const resultIds: number[] = await lottery(lootPercent, count);
+  const resultIds: number[] = lottery(lootPercent, count);
   let itemCounter: number[] = new Array(itemPool.length + 1).fill(0);
   // ガチャ結果アイテムの個数を計算
   resultIds.forEach(id => { itemCounter[id]++; });

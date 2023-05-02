@@ -1,4 +1,4 @@
-const lottery = async (percent: number[], times: number): Promise<number[]> => {
+const lottery = (percent: number[], times: number) => {
   const MAX_PERCENT = 100;
   let totalPercent = percent.reduce((total, num) => total + num);
 
