@@ -93,6 +93,10 @@ describe("add item tests", () => {
 });
 
 describe("use item tests", () => {
+  beforeEach(()=>{
+        jest.resetAllMocks();
+    });
+
   const mockPlayer: Player = {
     id: 1,
     name: "Player",
@@ -124,17 +128,17 @@ describe("use item tests", () => {
   };
 
   // DBアクセス関数をモック関数に書き換え
-  jest.spyOn(playerItemModel, "doDataCheck").mockReset().mockImplementation();
-  jest.spyOn(playerItemModel, "updateItem").mockReset().mockImplementation();
-  jest.spyOn(playerModel, "updatePlayer").mockReset().mockImplementation();
+  jest.spyOn(playerItemModel, "doDataCheck").mockImplementation();
+  jest.spyOn(playerItemModel, "updateItem").mockImplementation();
+  jest.spyOn(playerModel, "updatePlayer").mockImplementation();
 
   test("update", async () => {
-    const getPlayerByIdSpy = jest.spyOn(playerModel, "getPlayerById").mockReset()
+    const getPlayerByIdSpy = jest.spyOn(playerModel, "getPlayerById")
       .mockResolvedValue({ ...mockPlayer });
-    const getItemSpy = jest.spyOn(playerItemModel, "getItem").mockReset()
+    const getItemSpy = jest.spyOn(playerItemModel, "getItem")
       .mockResolvedValueOnce({ ...mockPlayerItem1 })
       .mockResolvedValueOnce({ ...mockPlayerItem2 });
-    const getItemDataSpy = jest.spyOn(playerItemModel, "getItemData").mockReset()
+    const getItemDataSpy = jest.spyOn(playerItemModel, "getItemData")
       .mockResolvedValueOnce({ ...mockItem1 })
       .mockResolvedValueOnce({ ...mockItem2 });
 
@@ -161,7 +165,7 @@ describe("use item tests", () => {
   });
 
   test("errors", async () => {
-    const getPlayerByIdSpy = jest.spyOn(playerModel, "getPlayerById").mockReset()
+    const getPlayerByIdSpy = jest.spyOn(playerModel, "getPlayerById")
       .mockResolvedValue({
         id: 1,
         name: "Player Without Money",
@@ -176,10 +180,10 @@ describe("use item tests", () => {
         hp: 200,
         mp: 200
       });
-    const getItemSpy = jest.spyOn(playerItemModel, "getItem").mockReset()
+    const getItemSpy = jest.spyOn(playerItemModel, "getItem")
       .mockResolvedValueOnce({ ...mockPlayerItem1 })
       .mockResolvedValueOnce({ ...mockPlayerItem1 });
-    const getItemDataSpy = jest.spyOn(playerItemModel, "getItemData").mockReset()
+    const getItemDataSpy = jest.spyOn(playerItemModel, "getItemData")
       .mockResolvedValueOnce({ ...mockItem1 })
       .mockResolvedValueOnce({ ...mockItem1 });
 
@@ -200,6 +204,10 @@ describe("use item tests", () => {
 });
 
 describe("gacha tests", () => {
+  beforeEach(()=>{
+        jest.resetAllMocks();
+    });
+
   const mockItem1: Item = {
     id: 1,
     name: "HP Item",
@@ -226,23 +234,23 @@ describe("gacha tests", () => {
   };
 
   // DBアクセス関数をモック関数に書き換え
-  jest.spyOn(playerItemModel, "updateItem").mockReset().mockImplementation();
-  jest.spyOn(playerItemModel, "insertItem").mockReset().mockImplementation();
-  jest.spyOn(playerModel, "updatePlayer").mockReset().mockImplementation();
+  jest.spyOn(playerItemModel, "updateItem").mockImplementation();
+  jest.spyOn(playerItemModel, "insertItem").mockImplementation();
+  jest.spyOn(playerModel, "updatePlayer").mockImplementation();
 
   test("lottery function and result check", async () => {
-    const getPlayerByIdSpy = jest.spyOn(playerModel, "getPlayerById").mockReset()
+    const getPlayerByIdSpy = jest.spyOn(playerModel, "getPlayerById")
       .mockResolvedValue({
         id: 1,
         money: 100000
       });
-    const getItemsSpy = jest.spyOn(playerItemModel, "getItems").mockReset()
+    const getItemsSpy = jest.spyOn(playerItemModel, "getItems")
       .mockResolvedValue([mockPlayerItem1, mockPlayerItem2]);
-    const getAllItemsSpy = jest.spyOn(itemModel, "getAllItems").mockReset()
+    const getAllItemsSpy = jest.spyOn(itemModel, "getAllItems")
       .mockResolvedValue([mockItem1, mockItem2]);
 
     // 抽選ロジックのモック関数
-    const lotterySpy = jest.spyOn(lotteryHelper, "lottery").mockReset()
+    const lotterySpy = jest.spyOn(lotteryHelper, "lottery")
       .mockReturnValue([ 0, 1, 2, 2, 1, 1, 2, 0, 0 ,2]);
 
     let pid: any, cnt: any, conn: any;
